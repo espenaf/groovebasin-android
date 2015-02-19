@@ -7,26 +7,28 @@
     tools:context=".MainActivity$PlaceholderFragment">
 
     <LinearLayout
+        style="@style/NowPlayingWidgetInApp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
 
         <TextView
+            style="@style/NPWiASongTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/now_playing_song_title"
             android:text="Kråkevisa" />
 
         <TextView
+            style="@style/NPWiASongArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/now_playing_song_artist"
             android:text="Leaves Eyes" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            style="@style/NPWiAControls">
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -46,26 +48,40 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            style="@style/NPWiATimeDisplay">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/now_playing_current_time" />
+                style="@style/NPWiATimeDisplayFirstChild"
+                android:id="@+id/now_playing_current_time"
+                android:text="0:17" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/now_playing_total_time" />
+                style="@style/NPWTimeDisplayChildrenBase"
+                android:id="@+id/now_playing_total_time"
+                android:text="3:13" />
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp">
 
+            <TextView
+                style="@style/NowPlayingWidgetBaseFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/now_playing_next_song_label"
+                android:paddingRight="5dp"/>
+
+            <TextView
+                style="@style/NowPlayingWidgetBaseFont"
+                android:id="@+id/now_playing_next_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phutureprimitive - Xotica"/>
+        </LinearLayout>
 
     </LinearLayout>
-    <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </RelativeLayout>

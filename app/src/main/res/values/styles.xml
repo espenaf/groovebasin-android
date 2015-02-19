@@ -5,4 +5,74 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="NowPlayingWidgetBaseFont">
+        <item name="android:textColor">#fff</item>
+    </style>
+
+    <!-- Now Playing widget. -->
+    <style name="NowPlayingWidget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">#ff514566</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="NPWSongTitle" parent="NowPlayingWidgetBaseFont">
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="NPWArtistTitle" parent="NowPlayingWidgetBaseFont">
+
+    </style>
+
+    <style name="NPWControls">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="NPWTimeDisplay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
+    <style name="NPWTimeDisplayChildrenBase" parent="NowPlayingWidgetBaseFont">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="NPWTimeDisplayFirstChild" parent="NPWTimeDisplayChildrenBase">
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <!-- Same Now Playing widget, but displayed within our app. -->
+    <style name="NowPlayingWidgetInApp" parent="NowPlayingWidget">
+
+    </style>
+
+    <style name="NPWiASongTitle" parent="NPWSongTitle">
+
+    </style>
+
+    <style name="NPWiASongArtist" parent="NPWArtistTitle">
+
+    </style>
+
+    <style name="NPWiAControls" parent="NPWControls">
+
+    </style>
+
+    <style name="NPWiATimeDisplay" parent="NPWTimeDisplay">
+
+    </style>
+
+    <style name="NPWiATimeDisplayFirstChild" parent="NPWTimeDisplayFirstChild">
+
+    </style>
+
+
+
 </resources>
