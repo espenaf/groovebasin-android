@@ -31,19 +31,19 @@
             style="@style/NPWiAControls">
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/now_playing_seek_previous" />
+                style="@style/NPWiAControlsButtonsBase"
+                android:id="@+id/now_playing_seek_previous"
+                android:src="@drawable/previous"/>
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/now_playing_play_or_pause" />
+                style="@style/NPWiAControlsButtonsPlay"
+                android:id="@+id/now_playing_play_or_pause"
+                android:src="@drawable/play" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/now_playing_seek_next" />
+                style="@style/NPWiAControlsButtonsBase"
+                android:id="@+id/now_playing_seek_next"
+                android:src="@drawable/next" />
 
         </LinearLayout>
 

@@ -22,7 +22,7 @@
     </style>
 
     <style name="NPWArtistTitle" parent="NowPlayingWidgetBaseFont">
-
+        <item name="android:paddingBottom">10dp</item>
     </style>
 
     <style name="NPWControls">
@@ -30,6 +30,16 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="NPWControlsButtonsBase">
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="NPWControlsButtonsPlay" parent="NPWControlsButtonsBase">
+
     </style>
 
     <style name="NPWTimeDisplay">
@@ -62,7 +72,20 @@
     </style>
 
     <style name="NPWiAControls" parent="NPWControls">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
 
+    <style name="NPWiAControlsButtonsBase" parent="NPWControlsButtonsBase">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+    </style>
+
+    <style name="NPWiAControlsButtonsPlay" parent="NPWControlsButtonsPlay">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
     </style>
 
     <style name="NPWiATimeDisplay" parent="NPWTimeDisplay">
