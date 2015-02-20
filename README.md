@@ -1,10 +1,14 @@
 # Groovebasin:Android
 
-A native app for Android that will let you interface with your already existing groove basin. (https://github.com/andrewrk/groovebasin)
+A native app for Android that will let you interface with your already existing [groove basin](https://github.com/andrewrk/groovebasin).
 
 ## Status
 
-Vaporware.
+Boring.
+
+## Screenshots
+
+# ![pre-alpha very boring](http://i.imgur.com/ELcQ5Tq.png)
 
 ## Roadmap
 
