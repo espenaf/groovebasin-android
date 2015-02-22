@@ -15,6 +15,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">#ff514566</item>
         <item name="android:padding">10dp</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
     </style>
 
     <style name="NPWSongTitle" parent="NowPlayingWidgetBaseFont">
@@ -60,7 +64,10 @@
 
     <!-- Same Now Playing widget, but displayed within our app. -->
     <style name="NowPlayingWidgetInApp" parent="NowPlayingWidget">
-
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
     </style>
 
     <style name="NPWiASongTitle" parent="NPWSongTitle">
