@@ -1,26 +1,33 @@
 package com.melissanoelle.groovebasin;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
+import java.net.Socket;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -45,6 +52,11 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // Something about sockets.
+        TextView title = (TextView) findViewById(R.id.now_playing_song_title);
+        GroovebasinTask gbTask = new GroovebasinTask(title);
+        gbTask.execute();
     }
 
     @Override
@@ -131,12 +143,10 @@ public class MainActivity extends ActionBarActivity
         public PlaceholderFragment() {
         }
 
-
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            View rootView = inflater.inflate(R.layout.controller_fragment, container, false);
             return rootView;
         }
 
@@ -148,4 +158,69 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+
+    public class GroovebasinTask extends AsyncTask<Void, Integer, Void> {
+        public final String GROOVEBASIN_URL = "demo.groovebasin.com";
+        public final Integer GROOVEBASIN_PORT = 80;
+        public final String PROTOCOL_UPGRADE = "OHqIjsp9g9dpGRZ3p8LcxVey9tpMh_bT";
+
+        private WeakReference<TextView> mUpdateView;
+
+        private boolean mRun = true;
+        private PrintWriter out;
+        private BufferedReader in;
+        private String incomingMessage;
+
+        public GroovebasinTask(TextView view) {
+            this.mUpdateView = new WeakReference<TextView>(view);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Socket socket = new Socket(GROOVEBASIN_URL, GROOVEBASIN_PORT);
+                try {
+                    Log.d(LOG_TAG, "trying!");
+
+                    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                    out.println("protocolupgrade " + PROTOCOL_UPGRADE);
+                    out.flush();
+
+                    //                this.sendMessage(command);
+                    while (mRun) {
+                        incomingMessage = in.readLine();
+
+                        if (incomingMessage != null) {
+                            Log.d(LOG_TAG, "got message:");
+                            Log.d(LOG_TAG, incomingMessage);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    Log.d(LOG_TAG, "odin seems bummed");
+                    e.printStackTrace();
+                } finally {
+                    out.flush();
+                    out.close();
+                    in.close();
+                    socket.close();
+                    Log.d(LOG_TAG, "closed up shop.");
+                }
+            } catch (Exception e) {
+                Log.d(LOG_TAG, "odin is definitely bummed");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Log.d(LOG_TAG, "oh shit");
+            Log.d(LOG_TAG, values.toString());
+            if (mUpdateView.get() != null && values.length > 0) {
+                mUpdateView.get().setText(values[0].toString());
+            }
+        }
+    }
 }
