@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -38,6 +41,9 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +59,7 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         // Something about sockets.
-        TextView title = (TextView) findViewById(R.id.now_playing_song_title);
-        GroovebasinTask gbTask = new GroovebasinTask(title);
+        GroovebasinTask gbTask = new GroovebasinTask();
         gbTask.execute();
     }
 
@@ -158,20 +163,20 @@ public class MainActivity extends ActionBarActivity
     }
 
 
-    public class GroovebasinTask extends AsyncTask<Void, Integer, Void> {
+    public class GroovebasinTask extends AsyncTask<Void, JSONObject, Void> {
         public final String GROOVEBASIN_URL = "home.andrewkelley.me"; //"demo.groovebasin.com";
         public final Integer GROOVEBASIN_PORT = 31886; //6600;
         public final String PROTOCOL_UPGRADE = "OHqIjsp9g9dpGRZ3p8LcxVey9tpMh_bT";
-
-        private WeakReference<TextView> mUpdateView;
 
         private boolean mRun = true;
         private PrintWriter out;
         private BufferedReader in;
         private String incomingMessage;
+        private JSONObject libraryQueue;
+        private JSONObject queue;
+        private JSONObject currentTrack;
 
-        public GroovebasinTask(TextView view) {
-            this.mUpdateView = new WeakReference<TextView>(view);
+        public GroovebasinTask() {
         }
 
         @Override
@@ -198,15 +203,40 @@ public class MainActivity extends ActionBarActivity
                             Log.d(LOG_TAG, incomingMessage);
 
                             if (!firstMessage) {
+                                Log.d(LOG_TAG, "upgrading protocol.");
                                 firstMessage = true;
                                 out.println("protocolupgrade " + PROTOCOL_UPGRADE);
-                            } else {
+
                                 if (!haveSubscribed) {
+                                    Log.d(LOG_TAG, "asking for subscriptions.");
+                                    haveSubscribed = true;
+                                    out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"libraryQueue\"}}");
+                                    out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"queue\"}}");
                                     out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"currentTrack\"}}");
-                                    out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"library\"}}");
+                                }
+                            } else {
+                                Log.d(LOG_TAG, "not the first message.");
+                                JSONObject message = new JSONObject(incomingMessage);
+                                switch (message.getString("name")) {
+                                    case "libraryQueue":
+                                        libraryQueue = message.getJSONObject("args");
+                                        break;
+                                    case "queue":
+                                        queue = message.getJSONObject("args");
+                                        break;
+                                    case "currentTrack":
+                                        currentTrack = message.getJSONObject("args");
+                                        String currentTrackItemId = currentTrack.getString("currentItemId");
+                                        String queueKey = queue.getJSONObject(currentTrackItemId).getString("key");
+                                        JSONObject trackInfo = libraryQueue.getJSONObject(queueKey);
+//                                        Double trackDuration = trackInfo.getDouble("duration");
+                                        publishProgress(trackInfo);
+                                        break;
+                                    default:
+                                        Log.d(LOG_TAG, "unsupported message:");
+                                        Log.d(LOG_TAG, incomingMessage);
                                 }
                             }
-
                         } else {
                             mRun = false;
                         }
@@ -231,12 +261,19 @@ public class MainActivity extends ActionBarActivity
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            Log.d(LOG_TAG, "oh shit");
-            Log.d(LOG_TAG, values.toString());
-            if (mUpdateView.get() != null && values.length > 0) {
-                mUpdateView.get().setText(values[0].toString());
+        protected void onProgressUpdate(JSONObject... trackInfo) {
+            super.onProgressUpdate(trackInfo);
+            try {
+                String trackName = trackInfo[0].getString("name");
+                String trackArtistName = trackInfo[0].getString("artistName");
+                ((TextView)findViewById(R.id.now_playing_song_title)).setText(trackName);
+                ((TextView)findViewById(R.id.now_playing_song_artist)).setText(trackArtistName);
+            } catch (JSONException e) {
+                Log.d(LOG_TAG, "thing");
+                e.printStackTrace();
             }
         }
     }
+
+
 }
