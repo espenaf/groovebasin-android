@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -160,8 +159,8 @@ public class MainActivity extends ActionBarActivity
 
 
     public class GroovebasinTask extends AsyncTask<Void, Integer, Void> {
-        public final String GROOVEBASIN_URL = "demo.groovebasin.com";
-        public final Integer GROOVEBASIN_PORT = 80;
+        public final String GROOVEBASIN_URL = "home.andrewkelley.me"; //"demo.groovebasin.com";
+        public final Integer GROOVEBASIN_PORT = 31886; //6600;
         public final String PROTOCOL_UPGRADE = "OHqIjsp9g9dpGRZ3p8LcxVey9tpMh_bT";
 
         private WeakReference<TextView> mUpdateView;
@@ -177,6 +176,10 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         protected Void doInBackground(Void... params) {
+
+            boolean firstMessage = false;
+            boolean haveSubscribed = false;
+
             try {
                 Socket socket = new Socket(GROOVEBASIN_URL, GROOVEBASIN_PORT);
                 try {
@@ -185,16 +188,27 @@ public class MainActivity extends ActionBarActivity
                     out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                    out.println("protocolupgrade " + PROTOCOL_UPGRADE);
-                    out.flush();
-
-                    //                this.sendMessage(command);
                     while (mRun) {
                         incomingMessage = in.readLine();
+
+                        Log.d(LOG_TAG, "running...");
 
                         if (incomingMessage != null) {
                             Log.d(LOG_TAG, "got message:");
                             Log.d(LOG_TAG, incomingMessage);
+
+                            if (!firstMessage) {
+                                firstMessage = true;
+                                out.println("protocolupgrade " + PROTOCOL_UPGRADE);
+                            } else {
+                                if (!haveSubscribed) {
+                                    out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"currentTrack\"}}");
+                                    out.println("{\"name\":\"subscribe\", \"args\": {\"name\":\"library\"}}");
+                                }
+                            }
+
+                        } else {
+                            mRun = false;
                         }
                     }
 
@@ -202,14 +216,16 @@ public class MainActivity extends ActionBarActivity
                     Log.d(LOG_TAG, "odin seems bummed");
                     e.printStackTrace();
                 } finally {
-                    out.flush();
                     out.close();
                     in.close();
                     socket.close();
+                    firstMessage = false;
+                    haveSubscribed = false;
                     Log.d(LOG_TAG, "closed up shop.");
                 }
             } catch (Exception e) {
                 Log.d(LOG_TAG, "odin is definitely bummed");
+                e.printStackTrace();
             }
             return null;
         }
